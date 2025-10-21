@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "ctl-tiertagger",
+  "version": "${version}",
+  "name": "CTL TierTagger",
+  "description": "Displays player PvP tiers from Central TierList directly in their nametags",
+  "authors": [
+    "CTL Team"
+  ],
+  "contact": {
+    "homepage": "https://centraltierlist.com",
+    "sources": "https://github.com/ctltierlist/tiertagger"
+  },
+  "license": "MIT",
+  "icon": "assets/ctl-tiertagger/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.ctltierlist.tiertagger.CTLTierTaggerClient"
+    ],
+    "modmenu": [
+      "com.ctltierlist.tiertagger.client.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "ctl-tiertagger.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": ">=1.21.1 <=1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
