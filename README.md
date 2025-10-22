@@ -1,6 +1,6 @@
 # CTL TierTagger
 
-A Minecraft Fabric mod that displays player PvP tiers from [Central TierList](https://centraltierlist.com) directly in their nametags.
+A Minecraft Fabric mod that displays player PvP tiers from [Central TierList](https://ctltierlist.vercel.app) directly in their nametags.
 
 ## Features
 
@@ -84,5 +84,5 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Links
 
-- [Central TierList Website](https://centraltierlist.com)
+- [Central TierList Website](https://ctltierlist.vercel.app)
 - [Discord](https://discord.gg/1-21-central-tierlist-1207931735485186130)

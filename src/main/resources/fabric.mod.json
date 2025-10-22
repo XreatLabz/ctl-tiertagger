@@ -8,7 +8,7 @@
     "CTL Team"
   ],
   "contact": {
-    "homepage": "https://centraltierlist.com",
+    "homepage": "https://ctltierlist.vercel.app",
     "sources": "https://github.com/ctltierlist/tiertagger"
   },
   "license": "MIT",

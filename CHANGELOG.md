@@ -87,5 +87,5 @@ This project follows [Semantic Versioning](https://semver.org/):
 
 - [GitHub Repository](https://github.com/ctltierlist/tiertagger)
 - [Modrinth Page](https://modrinth.com/mod/ctl-tiertagger)
-- [Central TierList](https://centraltierlist.com)
+- [Central TierList](https://ctltierlist.vercel.app)
 - [API Documentation](https://ctltierlist-api-b2s8.vercel.app)
