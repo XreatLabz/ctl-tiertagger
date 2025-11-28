@@ -1,5 +1,6 @@
 package com.ctltierlist.tiertagger;
 
+import com.ctltierlist.tiertagger.cache.OverallCache;
 import com.ctltierlist.tiertagger.client.gui.PlayerSearchScreen;
 import com.ctltierlist.tiertagger.config.ModConfig;
 import net.fabricmc.api.ClientModInitializer;
@@ -21,6 +22,9 @@ public class CTLTierTaggerClient implements ClientModInitializer {
         
         // Initialize config
         ModConfig.init(FabricLoader.getInstance().getConfigDir());
+        
+        // Initialize overall cache (downloads /rankings/overall on startup)
+        OverallCache.init(FabricLoader.getInstance().getConfigDir());
         
         // Register gamemode keybind
         gamemodeKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -73,6 +77,7 @@ public class CTLTierTaggerClient implements ClientModInitializer {
             case "uhc" -> "\uE804";
             case "axe" -> "\uE805";
             case "smp" -> "\uE806";
+            case "diasmp" -> "\uE808";
             default -> "";
         };
     }

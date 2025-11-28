@@ -171,6 +171,7 @@ public class TierListAPI {
             case "uhc" -> "UHC";
             case "axe", "axepvp" -> "Axe";
             case "smp", "smpkit" -> "SMP";
+            case "diasmp" -> "DiaSMP";
             default -> gamemode;
         };
     }

@@ -289,7 +289,7 @@ public class ModConfig {
     
     // Gamemode utilities
     public static String[] getAvailableGamemodes() {
-        return new String[]{"Sword", "Crystal", "Netherite", "Potion", "Mace", "UHC", "Axe", "SMP"};
+        return new String[]{"Sword", "Crystal", "Netherite", "Potion", "Mace", "UHC", "Axe", "SMP", "DiaSMP"};
     }
     
     public static void cycleGamemode() {
