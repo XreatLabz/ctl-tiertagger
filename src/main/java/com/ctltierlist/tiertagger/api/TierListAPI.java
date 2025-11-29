@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TierListAPI {
-    private static final String API_BASE_URL = "https://ctltierlist-api-b2s8.vercel.app";
+    private static final String API_BASE_URL = "https://ctltierlist-api.netlify.app";
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -81,7 +81,7 @@ public class TierListAPI {
                         
                         if (json.has("profile")) {
                             JsonObject profile = json.getAsJsonObject("profile");
-                            String playerName = profile.has("name") ? profile.get("name").getAsString() : query;
+                            String playerName = profile.has("ingameName") ? profile.get("ingameName").getAsString() : query;
                             String uuid = profile.has("uuid") ? profile.get("uuid").getAsString() : "";
                             
                             // Get highest tier from ranks
