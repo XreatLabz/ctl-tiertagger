@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class OverallCache {
-    private static final String API_URL = "https://ctltierlist-api.netlify.app/rankings/overall";
+    private static final String API_URL = "https://private-ctltierlist-api.vercel.app/rankings/overall";
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(30))
             .build();
@@ -35,15 +35,17 @@ public class OverallCache {
         // Load from disk cache first (instant startup)
         loadFromDisk();
         
-        // Then refresh from API in background
-        CompletableFuture.runAsync(OverallCache::refreshFromAPI);
-        
-        // Schedule hourly refresh
+        // Schedule hourly refresh with dedicated executor
         scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "CTL-TierTagger-CacheRefresh");
             t.setDaemon(true);
             return t;
         });
+        
+        // Refresh from API immediately on startup (runs on our executor, not ForkJoinPool)
+        scheduler.execute(OverallCache::refreshFromAPI);
+        
+        // Schedule hourly refresh after initial delay
         scheduler.scheduleAtFixedRate(
             OverallCache::refreshFromAPI,
             REFRESH_INTERVAL_MS,
@@ -52,7 +54,7 @@ public class OverallCache {
         );
         
         initialized = true;
-        CTLTierTagger.LOGGER.info("OverallCache initialized with {} players", playerCache.size());
+        CTLTierTagger.LOGGER.info("OverallCache initialized with {} players from disk cache, API refresh started", playerCache.size());
     }
 
     public static TierListAPI.PlayerTierData getPlayer(String playerName) {

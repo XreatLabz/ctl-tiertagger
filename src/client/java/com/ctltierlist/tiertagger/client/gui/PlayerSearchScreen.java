@@ -40,7 +40,7 @@ public class PlayerSearchScreen extends Screen {
         );
         this.searchField.setPlaceholder(Text.literal("Enter player name..."));
         this.searchField.setMaxLength(16);
-        this.addSelectableChild(this.searchField);
+        this.addDrawableChild(this.searchField);
         this.setInitialFocus(this.searchField);
         
         // Search button
@@ -132,9 +132,6 @@ public class PlayerSearchScreen extends Screen {
             centerY - 50,
             0xFFFFFF
         );
-
-        // Draw search field
-        this.searchField.render(context, mouseX, mouseY, delta);
 
         // Draw status messages
         if (this.isSearching) {

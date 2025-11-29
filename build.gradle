@@ -69,3 +69,43 @@ jar {
 		rename { "${it}_${project.base.archivesName.get()}"}
 	}
 }
+
+// Load .env file if it exists
+def envFile = file('.env')
+def webhookUrl = ''
+if (envFile.exists()) {
+	envFile.eachLine { line ->
+		if (line.startsWith('DISCORD_WEBHOOK_URL=')) {
+			webhookUrl = line.substring('DISCORD_WEBHOOK_URL='.length())
+		}
+	}
+}
+
+tasks.register('uploadToDiscord', Exec) {
+	dependsOn jar
+	def jarFile = file("build/libs/${project.base.archivesName.get()}-${project.version}.jar")
+	
+	onlyIf {
+		if (!envFile.exists() || webhookUrl.isEmpty()) {
+			println "Discord webhook URL not configured in .env file"
+			return false
+		}
+		return true
+	}
+	
+	doFirst {
+		if (!jarFile.exists()) {
+			throw new GradleException("JAR file not found: ${jarFile}")
+		}
+	}
+	
+	commandLine 'curl', '-F', "content=✅  **Build Complete!** New JAR file ready:",
+		'-F', "file=@${jarFile.absolutePath}",
+		webhookUrl
+	
+	doLast {
+		println "Uploaded ${jarFile.name} to Discord"
+	}
+}
+
+jar.finalizedBy uploadToDiscord

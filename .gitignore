@@ -30,3 +30,6 @@ run/
 *.log
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
+
+# Environment
+.env
