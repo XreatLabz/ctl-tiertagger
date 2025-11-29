@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  workflow_dispatch:   # 👈 Added to allow manual runs
+  workflow_dispatch:   # Allows manual run
 
 jobs:
   build:
@@ -16,6 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -27,6 +28,12 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+
+    - name: Upload built jar
+      uses: actions/upload-artifact@v4
+      with:
+        name: ctl-tiertagger
+        path: build/libs/*.jar
 
   dependency-submission:
 
