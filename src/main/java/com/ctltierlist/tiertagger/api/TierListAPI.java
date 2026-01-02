@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TierListAPI {
-    private static final String API_BASE_URL = "https://private-ctltierlist-api.vercel.app";
+    private static final String API_BASE_URL = "https://api.centraltierlist.com";
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();

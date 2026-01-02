@@ -1,15 +1,13 @@
 package com.ctltierlist.tiertagger.client.util;
 
 import com.ctltierlist.tiertagger.CTLTierTagger;
+import com.ctltierlist.tiertagger.client.gui.widget.CustomPlayerSkinWidget;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.PlayerSkinWidget;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.util.ApiServices;
 import net.minecraft.util.Identifier;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -18,7 +16,6 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 public class SkinLoader {
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
@@ -131,10 +128,10 @@ public class SkinLoader {
     }
     
     /**
-     * Load skin and create a PlayerSkinWidget with correct size (60x144)
-     * Downloads skin directly from mineskin.eu and creates SkinTextures manually
+     * Load skin and create a CustomPlayerSkinWidget (works on both 1.20 and 1.21)
+     * Downloads skin directly from mineskin.eu
      */
-    public static CompletableFuture<PlayerSkinWidget> loadSkinAndCreateWidget(String playerName, MinecraftClient client) {
+    public static CompletableFuture<CustomPlayerSkinWidget> loadSkinAndCreateWidget(String playerName, MinecraftClient client) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 1. Download skin from mineskin.eu
@@ -169,25 +166,14 @@ public class SkinLoader {
                     registrationFuture.join();
                 }
 
-                // 3. Create SkinTextures manually
-                net.minecraft.client.util.SkinTextures skinTextures = new net.minecraft.client.util.SkinTextures(
-                    textureId,
-                    url,
-                    null,
-                    null,
-                    net.minecraft.client.util.SkinTextures.Model.WIDE,
-                    false
-                );
-
-                // 4. Create PlayerSkinWidget with supplier
-                final var finalSkinTextures = skinTextures;
-                PlayerSkinWidget widget = new PlayerSkinWidget(
-                    60, 144,
-                    client.getEntityModelLoader(),
-                    () -> finalSkinTextures
+                // 3. Create CustomPlayerSkinWidget with texture supplier
+                final Identifier finalTextureId = textureId;
+                CustomPlayerSkinWidget widget = new CustomPlayerSkinWidget(
+                    0, 0, 60, 144,
+                    () -> finalTextureId
                 );
                 
-                CTLTierTagger.LOGGER.info("Created PlayerSkinWidget for {} using mineskin.eu", playerName);
+                CTLTierTagger.LOGGER.info("Created CustomPlayerSkinWidget for {} using mineskin.eu", playerName);
                 return widget;
             } catch (Exception e) {
                 CTLTierTagger.LOGGER.error("Error creating skin widget for {}: {}", playerName, e.getMessage());
