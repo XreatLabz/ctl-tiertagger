@@ -86,7 +86,7 @@ if (envFile.exists()) {
 }
 
 tasks.register('uploadToDiscord', Exec) {
-	dependsOn jar
+	dependsOn remapJar
 	def jarFile = file("build/libs/${project.base.archivesName.get()}-${project.version}.jar")
 	
 	onlyIf {
@@ -112,4 +112,4 @@ tasks.register('uploadToDiscord', Exec) {
 	}
 }
 
-jar.finalizedBy uploadToDiscord
+remapJar.finalizedBy uploadToDiscord

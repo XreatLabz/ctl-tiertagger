@@ -1,13 +1,13 @@
 package com.ctltierlist.tiertagger.client.gui;
 
 import com.ctltierlist.tiertagger.api.TierListAPI;
-import com.ctltierlist.tiertagger.client.gui.widget.CustomPlayerSkinWidget;
 import com.ctltierlist.tiertagger.config.ModConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.PlayerSkinWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
@@ -19,9 +19,9 @@ public class PlayerInfoScreen extends Screen {
     private final Screen parent;
     private final TierListAPI.PlayerTierData playerData;
     private final List<TierEntry> tierEntries = new ArrayList<>();
-    private final CustomPlayerSkinWidget skinWidget;
+    private final PlayerSkinWidget skinWidget;
 
-    public PlayerInfoScreen(Screen parent, TierListAPI.PlayerTierData playerData, CustomPlayerSkinWidget skinWidget) {
+    public PlayerInfoScreen(Screen parent, TierListAPI.PlayerTierData playerData, PlayerSkinWidget skinWidget) {
         super(Text.literal("Player Info"));
         this.parent = parent;
         this.playerData = playerData;

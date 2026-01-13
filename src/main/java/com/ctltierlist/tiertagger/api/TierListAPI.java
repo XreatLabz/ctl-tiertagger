@@ -129,9 +129,9 @@ public class TierListAPI {
             JsonObject profile = json.has("profile") ? json.getAsJsonObject("profile") : null;
             JsonObject ranks = json.has("ranks") ? json.getAsJsonObject("ranks") : null;
 
-            String region = profile != null && profile.has("region") ? profile.get("region").getAsString() : "Unknown";
-            String uuid = profile != null && profile.has("uuid") ? profile.get("uuid").getAsString() : "";
-            String avatar = profile != null && profile.has("avatar") ? profile.get("avatar").getAsString() : "";
+            String region = profile != null && profile.has("region") && !profile.get("region").isJsonNull() ? profile.get("region").getAsString() : "Unknown";
+            String uuid = profile != null && profile.has("uuid") && !profile.get("uuid").isJsonNull() ? profile.get("uuid").getAsString() : "";
+            String avatar = profile != null && profile.has("avatar") && !profile.get("avatar").isJsonNull() ? profile.get("avatar").getAsString() : "";
             
             int totalPoints = json.has("totalPoints") ? json.get("totalPoints").getAsInt() : 0;
             String title = json.has("title") ? json.get("title").getAsString() : "Unranked";

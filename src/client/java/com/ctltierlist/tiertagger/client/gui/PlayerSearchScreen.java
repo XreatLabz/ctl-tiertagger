@@ -2,12 +2,12 @@ package com.ctltierlist.tiertagger.client.gui;
 
 import com.ctltierlist.tiertagger.CTLTierTagger;
 import com.ctltierlist.tiertagger.api.TierListAPI;
-import com.ctltierlist.tiertagger.client.gui.widget.CustomPlayerSkinWidget;
 import com.ctltierlist.tiertagger.client.util.SkinLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.PlayerSkinWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 
@@ -86,7 +86,7 @@ public class PlayerSearchScreen extends Screen {
 
         // Load skin and player data
         CTLTierTagger.LOGGER.info("[Search] Starting async data fetch...");
-        CompletableFuture<CustomPlayerSkinWidget> skinWidgetFuture = SkinLoader.loadSkinAndCreateWidget(
+        CompletableFuture<PlayerSkinWidget> skinWidgetFuture = SkinLoader.loadSkinAndCreateWidget(
             playerName,
             this.client
         );
@@ -96,7 +96,7 @@ public class PlayerSearchScreen extends Screen {
         CompletableFuture.allOf(dataFuture, skinWidgetFuture).thenRun(() -> {
             CTLTierTagger.LOGGER.info("[Search] Both futures completed");
             TierListAPI.PlayerTierData data = dataFuture.join();
-            CustomPlayerSkinWidget skinWidget = skinWidgetFuture.join();
+            PlayerSkinWidget skinWidget = skinWidgetFuture.join();
             CTLTierTagger.LOGGER.info("[Search] Data: {}, SkinWidget: {}", data != null ? "OK" : "NULL", skinWidget != null ? "OK" : "NULL");
 
             if (this.client != null) {
