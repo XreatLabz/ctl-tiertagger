@@ -1,6 +1,7 @@
 package com.ctltierlist.tiertagger.client.util;
 
 import com.ctltierlist.tiertagger.CTLTierTagger;
+import com.ctltierlist.tiertagger.version.compat.CompatBridgeFactory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.PlayerSkinWidget;
 import net.minecraft.client.texture.NativeImage;
@@ -166,22 +167,13 @@ public class SkinLoader {
                     registrationFuture.join();
                 }
 
-                // 3. Create SkinTextures manually
-                net.minecraft.client.util.SkinTextures skinTextures = new net.minecraft.client.util.SkinTextures(
+                // 3. Create PlayerSkinWidget through compatibility bridge
+                PlayerSkinWidget widget = CompatBridgeFactory.client().createPlayerSkinWidget(
+                    client,
                     textureId,
                     url,
-                    null,
-                    null,
-                    net.minecraft.client.util.SkinTextures.Model.WIDE,
-                    false
-                );
-
-                // 4. Create PlayerSkinWidget with supplier
-                final var finalSkinTextures = skinTextures;
-                PlayerSkinWidget widget = new PlayerSkinWidget(
-                    60, 144,
-                    client.getEntityModelLoader(),
-                    () -> finalSkinTextures
+                    60,
+                    144
                 );
                 
                 CTLTierTagger.LOGGER.info("Created PlayerSkinWidget for {} using mineskin.eu", playerName);

@@ -1,6 +1,7 @@
 package com.ctltierlist.tiertagger.api;
 
 import com.ctltierlist.tiertagger.CTLTierTagger;
+import com.ctltierlist.tiertagger.util.GamemodeUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -146,7 +147,7 @@ public class TierListAPI {
                     if (rankData.has("rank")) {
                         String rank = rankData.get("rank").getAsString();
                         boolean retired = rankData.has("retired") && rankData.get("retired").getAsBoolean();
-                        tierData.setTierForGamemode(normalizeGamemode(gamemode), rank, retired);
+                        tierData.setTierForGamemode(GamemodeUtil.normalize(gamemode), rank, retired);
                     }
                 }
             }
@@ -158,24 +159,6 @@ public class TierListAPI {
         }
     }
     
-    /**
-     * Normalize gamemode names to match config names
-     */
-    private static String normalizeGamemode(String gamemode) {
-        return switch (gamemode.toLowerCase()) {
-            case "sword", "swd" -> "Sword";
-            case "crystal", "cpvp" -> "Crystal";
-            case "netherite", "nethpot" -> "Netherite";
-            case "pot", "potion" -> "Potion";
-            case "mace", "macepvp" -> "Mace";
-            case "uhc" -> "UHC";
-            case "axe", "axepvp" -> "Axe";
-            case "smp", "smpkit" -> "SMP";
-            case "diasmp" -> "DiaSMP";
-            default -> gamemode;
-        };
-    }
-
     /**
      * Convert tier string to numeric value for comparison (lower is better)
      */

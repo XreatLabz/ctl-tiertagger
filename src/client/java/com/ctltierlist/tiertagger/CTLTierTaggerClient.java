@@ -3,12 +3,14 @@ package com.ctltierlist.tiertagger;
 import com.ctltierlist.tiertagger.cache.OverallCache;
 import com.ctltierlist.tiertagger.client.gui.PlayerSearchScreen;
 import com.ctltierlist.tiertagger.config.ModConfig;
+import com.ctltierlist.tiertagger.version.ModMenuSupport;
+import com.ctltierlist.tiertagger.version.VersionSupport;
+import com.ctltierlist.tiertagger.version.compat.CompatBridgeFactory;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -18,8 +20,10 @@ public class CTLTierTaggerClient implements ClientModInitializer {
     
     @Override
     public void onInitializeClient() {
+        VersionSupport.requireSupportedOrThrow();
+        ModMenuSupport.requireCompatibleOrThrow();
         CTLTierTagger.init();
-        
+
         // Initialize config
         ModConfig.init(FabricLoader.getInstance().getConfigDir());
         
@@ -27,20 +31,22 @@ public class CTLTierTaggerClient implements ClientModInitializer {
         OverallCache.init(FabricLoader.getInstance().getConfigDir());
         
         // Register gamemode keybind
-        gamemodeKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.ctl-tiertagger.cycle_gamemode",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_G,
-            "category.ctl-tiertagger.controls"
-        ));
+        gamemodeKeybind = KeyBindingHelper.registerKeyBinding(
+            CompatBridgeFactory.client().createKeyBinding(
+                "key.ctl-tiertagger.cycle_gamemode",
+                GLFW.GLFW_KEY_G,
+                "category.ctl-tiertagger.controls"
+            )
+        );
         
         // Register search keybind
-        searchKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.ctl-tiertagger.search_player",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_Y,
-            "category.ctl-tiertagger.controls"
-        ));
+        searchKeybind = KeyBindingHelper.registerKeyBinding(
+            CompatBridgeFactory.client().createKeyBinding(
+                "key.ctl-tiertagger.search_player",
+                GLFW.GLFW_KEY_Y,
+                "category.ctl-tiertagger.controls"
+            )
+        );
         
         // Register keybind handlers
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

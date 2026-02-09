@@ -4,6 +4,7 @@ import com.ctltierlist.tiertagger.CTLTierTagger;
 import com.ctltierlist.tiertagger.api.TierListAPI;
 import com.ctltierlist.tiertagger.cache.TierCache;
 import com.ctltierlist.tiertagger.config.ModConfig;
+import com.ctltierlist.tiertagger.version.compat.CompatBridgeFactory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -125,11 +126,18 @@ public class TierHudRenderer {
         // Render with background
         int backgroundColor = (int)(0.25F * 255.0F) << 24;
         
-        CTLTierTagger.LOGGER.info("[DEBUG] Calling textRenderer.draw with x={}, light={}", x, light);
-        
-        textRenderer.draw(text, x, 0, 0xFFFFFF, false, matrix4f, vertexConsumers, 
-            TextRenderer.TextLayerType.SEE_THROUGH, backgroundColor, light);
-        
+        CTLTierTagger.LOGGER.info("[DEBUG] Calling compatibility draw path with x={}, light={}", x, light);
+
+        CompatBridgeFactory.client().drawSeeThroughText(
+            textRenderer,
+            text,
+            x,
+            matrix4f,
+            vertexConsumers,
+            backgroundColor,
+            light
+        );
+
         matrices.pop();
         
         CTLTierTagger.LOGGER.info("[DEBUG] Render complete for {}", playerName);
