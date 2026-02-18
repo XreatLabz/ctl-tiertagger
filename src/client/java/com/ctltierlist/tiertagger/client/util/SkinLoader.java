@@ -103,7 +103,7 @@ public class SkinLoader {
                         MinecraftClient.getInstance().execute(() -> {
                             try {
                                 MinecraftClient.getInstance().getTextureManager()
-                                        .registerTexture(textureId, new NativeImageBackedTexture(image));
+                                        .registerTexture(textureId, createNativeImageTexture(image));
                                 registrationFuture.complete(null);
                             } catch (Exception e) {
                                 registrationFuture.completeExceptionally(e);
@@ -158,7 +158,7 @@ public class SkinLoader {
                     CompletableFuture<Void> registrationFuture = new CompletableFuture<>();
                     client.execute(() -> {
                         try {
-                            client.getTextureManager().registerTexture(textureId, new NativeImageBackedTexture(image));
+                            client.getTextureManager().registerTexture(textureId, createNativeImageTexture(image));
                             registrationFuture.complete(null);
                         } catch (Exception e) {
                             registrationFuture.completeExceptionally(e);
@@ -214,7 +214,7 @@ public class SkinLoader {
                         
                         MinecraftClient.getInstance().execute(() -> {
                             MinecraftClient.getInstance().getTextureManager()
-                                    .registerTexture(textureId, new NativeImageBackedTexture(image));
+                                    .registerTexture(textureId, createNativeImageTexture(image));
                         });
                         
                         headCache.put(playerName.toLowerCase(), textureId);
@@ -232,6 +232,21 @@ public class SkinLoader {
         });
     }
     
+    private static NativeImageBackedTexture createNativeImageTexture(NativeImage image) {
+        try {
+            java.lang.reflect.Constructor<NativeImageBackedTexture> oldCtor = NativeImageBackedTexture.class.getConstructor(NativeImage.class);
+            return oldCtor.newInstance(image);
+        } catch (Exception ignored) {
+        }
+
+        try {
+            java.lang.reflect.Constructor<NativeImageBackedTexture> newCtor = NativeImageBackedTexture.class.getConstructor(java.util.function.Supplier.class, NativeImage.class);
+            return newCtor.newInstance((java.util.function.Supplier<String>) () -> "ctl-tiertagger-skin", image);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create NativeImageBackedTexture", e);
+        }
+    }
+
     /**
      * Clear all cached textures
      */

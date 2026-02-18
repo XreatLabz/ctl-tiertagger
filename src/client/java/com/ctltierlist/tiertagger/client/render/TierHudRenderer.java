@@ -22,20 +22,35 @@ public class TierHudRenderer {
      * Called from renderLabelIfPresent, so positioning is already done
      */
     public static void renderTierAboveNametag(PlayerEntity player, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        CTLTierTagger.LOGGER.info("[DEBUG] renderTierAboveNametag called for player: {}", player.getName().getString());
-        
+        renderTierAboveNametag(player, player != null ? player.getName().getString() : null, matrices, vertexConsumers, light);
+    }
+
+    public static void renderTierAboveNametag(String playerName, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        renderTierAboveNametag(null, playerName, matrices, vertexConsumers, light);
+    }
+
+    private static void renderTierAboveNametag(PlayerEntity player, String playerName, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        CTLTierTagger.LOGGER.info("[DEBUG] renderTierAboveNametag called for player: {}", playerName);
+
+        if (playerName == null || playerName.isBlank()) {
+            return;
+        }
+
         if (!ModConfig.isEnabled()) {
             CTLTierTagger.LOGGER.info("[DEBUG] Mod is disabled, skipping render");
             return;
         }
-        
-        // Don't render for local player
-        if (player == client.player) {
+
+        // Don't render for local player when possible
+        if (player != null && player == client.player) {
             CTLTierTagger.LOGGER.info("[DEBUG] Player is local player, skipping render");
             return;
         }
-        
-        String playerName = player.getName().getString();
+        if (player == null && client.player != null && playerName.equals(client.player.getName().getString())) {
+            CTLTierTagger.LOGGER.info("[DEBUG] Player is local player (name match), skipping render");
+            return;
+        }
+
         CTLTierTagger.LOGGER.info("[DEBUG] Fetching tier data for: {}", playerName);
         
         // Fetch tier data if not cached

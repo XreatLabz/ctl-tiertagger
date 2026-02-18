@@ -186,30 +186,10 @@ public class PlayerSearchScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256) { // ESC key
-            this.close();
-            return true;
-        }
-        if (keyCode == 257 || keyCode == 335) { // ENTER or NUMPAD_ENTER key
-            performSearch();
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
     public void close() {
         if (this.client != null) {
             this.client.setScreen(this.parent);
         }
-    }
-
-    @Override
-    public void resize(MinecraftClient client, int width, int height) {
-        String text = this.searchField.getText();
-        this.init(client, width, height);
-        this.searchField.setText(text);
     }
 
     @Override

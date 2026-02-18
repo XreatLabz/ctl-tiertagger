@@ -8,7 +8,7 @@
 ## Dependency and compatibility
 - Build uses `modCompileOnly "com.terraformersmc:modmenu:11.0.3"`.
 - Runtime dependency in `fabric.mod.json` is currently `"modmenu": "*"`.
-- Minecraft range in `fabric.mod.json` is `"minecraft": "~1.21"`.
+- Minecraft range in `fabric.mod.json` is `"minecraft": ">=1.21.0 <=1.21.11"`.
 
 ## Recommended multi-version handling
 - Keep Mod Menu binding minimal (factory-only class) so version drift is localized.

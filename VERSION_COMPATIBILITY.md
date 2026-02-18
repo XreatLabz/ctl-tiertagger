@@ -2,8 +2,8 @@
 
 ## Supported Minecraft Versions
 
-This mod is built to support **Minecraft 1.21 through 1.21.10**:
-- ✅ Minecraft 1.21
+The mod currently supports **Minecraft 1.21.0 through 1.21.11** (inclusive):
+- ✅ Minecraft 1.21.0
 - ✅ Minecraft 1.21.1
 - ✅ Minecraft 1.21.2
 - ✅ Minecraft 1.21.3
@@ -14,110 +14,75 @@ This mod is built to support **Minecraft 1.21 through 1.21.10**:
 - ✅ Minecraft 1.21.8
 - ✅ Minecraft 1.21.9
 - ✅ Minecraft 1.21.10
+- ✅ Minecraft 1.21.11
 
-## How Version Compatibility Works
+## Single Source of Truth
 
-The mod uses the `>=1.21.1 <=1.21.10` version constraint in `fabric.mod.json`, which means:
-- The mod will work with any Minecraft version from 1.21.1 to 1.21.10 (inclusive)
-- It will NOT work with 1.21.0, 1.20.x, 1.21.11+, or 1.22.x (if/when released)
-- This provides explicit version range control for maximum compatibility
+Support boundaries are intentionally aligned across all compatibility gates:
+- Runtime gate: `VersionSupport.MIN_SUPPORTED` / `VersionSupport.MAX_SUPPORTED`
+- Metadata gate: `fabric.mod.json` → `"minecraft": ">=1.21.0 <=1.21.11"`
+- Documentation: this file and versioned docs
 
-## Technical Details
+If you change support bounds, update all three together.
 
-### Build Configuration
-- **Base Version**: 1.21.1 (for compatibility)
-- **Yarn Mappings**: 1.21.1+build.3
-- **Fabric Loader**: 0.16.0+
-- **Fabric API**: 0.102.0+1.21.1 (or any 1.21.x compatible version)
+## Runtime Compatibility Gate (Fail-fast)
 
-### Version String Format
-The mod declares: `"minecraft": ">=1.21.1 <=1.21.10"`
+On client init, the mod validates the running Minecraft version with:
+- `VersionSupport.requireSupportedOrThrow()`
 
-This uses Fabric's version range syntax:
-- `>=1.21.1 <=1.21.10` = 1.21.1 through 1.21.10 (inclusive range)
-- `~1.21` = 1.21.x (any patch version)
-- `>=1.21` = 1.21 and above (including 1.22+)
-- `1.21.1` = exactly 1.21.1
+Behavior:
+- Supported version: startup continues
+- Unsupported version: clear error is logged and initialization aborts
 
-## Testing Compatibility
+## Compatibility Matrix (Pinned Scope)
 
-The mod has been built against Minecraft 1.21.1 which provides maximum compatibility with:
-- Earlier 1.21.x versions (forward compatible)
-- Later 1.21.x versions (backward compatible)
+This matrix tracks upstream API drift we care about and whether this mod currently touches it.
 
-## Future Minecraft Versions
+| Upstream change | Version boundary | Used in this mod now? | Bridge / seam action | Impacted files |
+| --- | --- | --- | --- | --- |
+| `Entity#getWorld` → `Entity#getEntityWorld` rename | 1.21.9+ mappings | **No** direct usage in current code paths | None required right now | N/A |
+| Player label render signature churn (`AbstractClientPlayerEntity` → `PlayerEntityRenderState`) | 1.21.4+ family (still relevant through 1.21.9/1.21.10/1.21.11) | **Yes** (`EntityRendererMixin`) | Keep mixin seam version-safe (legacy + state signatures) | `src/client/java/com/ctltierlist/tiertagger/client/mixin/EntityRendererMixin.java` |
+| Render API churn (world rendering event suite removed / redesigned) | 1.21.9/1.21.10 | **No** (mod does not use world render events) | None; continue using existing nametag mixin path | N/A |
+| HUD API deprecation path (`HudRenderCallback` deprecated) | 1.21.5+ onward | **No** (mod does not use HUD callback APIs) | None required | N/A |
+| Identifier creation rules (`new Identifier(...)` discouraged/invalid) | Modern 1.21.x mappings/docs | **Yes** (`Identifier.of(...)` already used) | Keep current `Identifier.of(...)` usage | `src/client/java/com/ctltierlist/tiertagger/client/util/SkinLoader.java`, `src/client/java/com/ctltierlist/tiertagger/version/compat/ClientCompatBridge121.java` |
+| Keybinding category API moved to `KeyBinding.Category` | 1.21.9+ / 1.21.11 runtime target in this project | **Yes** | Keep existing reflection bridge split by detected version | `src/client/java/com/ctltierlist/tiertagger/version/compat/ClientCompatBridge121.java` |
+| `PlayerSkinWidget` constructor/model loader type drift | 1.21.x internal type naming churn | **Yes** (search screen skin widget path) | Keep creation centralized in client bridge | `src/client/java/com/ctltierlist/tiertagger/version/compat/ClientCompatBridge121.java`, `src/client/java/com/ctltierlist/tiertagger/client/util/SkinLoader.java` |
 
-### For 1.21.x updates
-The mod should work without recompilation for future 1.21.x releases.
+## Compatibility Architecture (Current)
 
-### For 1.22+ (when released)
-A new version of the mod will need to be built with:
-- Updated `minecraft_version` in gradle.properties
-- Updated `yarn_mappings` for the new version
-- Potentially updated `fabric_version` for the new Minecraft version
-- Update version constraint to `~1.22` or `>=1.21`
+The project’s compatibility seam remains:
+- `ClientCompatBridge`
+- `ClientCompatBridge121`
+- `CompatBridgeFactory`
 
-## Fabric API Compatibility
+Feature logic should keep calling the seam; avoid scattered version checks.
 
-The mod declares `"fabric-api": "*"` which means:
-- Any version of Fabric API is accepted
-- Users should install the Fabric API version matching their Minecraft version
-- For 1.21.1 → Use Fabric API 0.102.0+1.21.1 or compatible
-- For 1.21.4 → Use Fabric API 0.110.0+1.21.4 or compatible
+## Build Baseline and Intent
 
-## Loader Version
+- Build baseline remains 1.21.1 Yarn/Fabric coordinates in `gradle.properties`
+- Runtime support range is still explicitly bounded to 1.21.0–1.21.11
+- Patch support is validated through bridge/mixin seams plus smoke tests
 
-**Minimum**: Fabric Loader 0.16.0
-**Recommended**: Latest Fabric Loader for your Minecraft version
+## Verification Checklist
 
-## Java Version
+Minimum verification for compatibility updates:
+1. Search for unstable direct usages:
+   - `getWorld(`
+   - deprecated HUD callbacks
+   - `new Identifier(`
+2. Project diagnostics and build:
+   - LSP/project diagnostics
+   - `./gradlew clean build`
+3. Runtime smoke versions:
+   - 1.21.0 (lower bound)
+   - 1.21.1 (baseline)
+   - 1.21.9 or 1.21.10 (API churn boundary)
+   - 1.21.11 (upper bound)
 
-**Minimum**: Java 21
-**Recommended**: Java 21 or Java 22
+## Future Version Policy
 
-Minecraft 1.21+ requires Java 21, so this mod follows the same requirement.
-
-## Installation for Different Versions
-
-### For Minecraft 1.21.1:
-1. Install Fabric Loader 0.16.0+
-2. Install Fabric API 0.102.0+1.21.1
-3. Install CTL TierTagger 1.0.0
-4. Launch game
-
-### For Minecraft 1.21.4:
-1. Install Fabric Loader 0.16.9+
-2. Install Fabric API 0.110.0+1.21.4
-3. Install CTL TierTagger 1.0.0 (same file)
-4. Launch game
-
-### For Other 1.21.x versions:
-1. Install Fabric Loader 0.16.0+
-2. Install Fabric API for your Minecraft version
-3. Install CTL TierTagger 1.0.0 (same file)
-4. Launch game
-
-## Troubleshooting
-
-### "Incompatible mod set!" error
-- Check that you're using Minecraft 1.21.x (not 1.20.x or older)
-- Verify Java 21+ is installed
-- Ensure Fabric Loader 0.16.0+ is installed
-
-### Missing Fabric API
-- Download the correct Fabric API version for your Minecraft version
-- Place it in the mods folder alongside CTL TierTagger
-
-### Mixin errors
-- Ensure no conflicting mods are installed
-- Update Fabric Loader to the latest version
-- Check logs for specific conflicts
-
-## Version History
-
-### v1.0.0
-- Initial release
-- Supports Minecraft ~1.21 (all 1.21.x versions)
-- Built against 1.21.1 for maximum compatibility
-- Requires Fabric Loader 0.16.0+
-- Requires Java 21+
+For 1.21.x updates beyond 1.21.11 or 1.22+:
+1. Rebuild this matrix first (docs gate)
+2. Patch only proven drift points in bridge/mixin seams
+3. Align bounds in runtime + metadata + docs together
+4. Re-run full verification checklist

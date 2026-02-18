@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import java.util.function.Consumer;
 
 public class ColorPickerScreen extends Screen {
+    private boolean wasMouseDown = false;
     private final Screen parent;
     private final Consumer<Integer> onColorSelected;
     private int selectedColor;
@@ -133,22 +134,45 @@ public class ColorPickerScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        
+
+        boolean mouseDown = this.client != null && this.client.mouse.wasLeftButtonClicked();
+        if (mouseDown && !this.wasMouseDown) {
+            if (mouseX >= pickerX && mouseX <= pickerX + PICKER_SIZE && mouseY >= pickerY && mouseY <= pickerY + PICKER_SIZE) {
+                this.draggingSatBright = true;
+                this.updateSatBright(mouseX, mouseY);
+            } else if (mouseX >= hueBarX && mouseX <= hueBarX + HUE_BAR_WIDTH && mouseY >= pickerY && mouseY <= pickerY + PICKER_SIZE) {
+                this.draggingHue = true;
+                this.updateHue(mouseY);
+            }
+        }
+
+        if (mouseDown) {
+            if (this.draggingSatBright) {
+                this.updateSatBright(mouseX, mouseY);
+            } else if (this.draggingHue) {
+                this.updateHue(mouseY);
+            }
+        } else {
+            this.draggingSatBright = false;
+            this.draggingHue = false;
+        }
+        this.wasMouseDown = mouseDown;
+
         // Title
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, Colors.WHITE);
-        
+
         // Saturation-Brightness picker
         this.renderSaturationBrightnessPicker(context);
-        
+
         // Hue bar
         this.renderHueBar(context);
-        
+
         // Color preview
         int previewX = this.width / 2 - 50;
         int previewY = pickerY + PICKER_SIZE + 80;
         context.fill(previewX, previewY, previewX + 100, previewY + 30, 0xFF000000);
         context.fill(previewX + 1, previewY + 1, previewX + 99, previewY + 29, 0xFF000000 | this.selectedColor);
-        
+
         // Labels
         context.drawText(this.textRenderer, "Hex:", this.width / 2 - 130, pickerY + PICKER_SIZE + 25, Colors.WHITE, false);
         context.drawText(this.textRenderer, "Red:", this.width / 2 - 150, pickerY + PICKER_SIZE + 55, Colors.WHITE, false);
@@ -175,8 +199,8 @@ public class ColorPickerScreen extends Screen {
         // Draw selector circle
         int selectorX = pickerX + (int) (this.saturation * PICKER_SIZE);
         int selectorY = pickerY + (int) ((1f - this.brightness) * PICKER_SIZE);
-        context.drawBorder(selectorX - 4, selectorY - 4, 8, 8, 0xFFFFFFFF);
-        context.drawBorder(selectorX - 3, selectorY - 3, 6, 6, 0xFF000000);
+        drawBorder(context,selectorX - 4, selectorY - 4, 8, 8, 0xFFFFFFFF);
+        drawBorder(context,selectorX - 3, selectorY - 3, 6, 6, 0xFF000000);
     }
     
     private void renderHueBar(DrawContext context) {
@@ -192,50 +216,6 @@ public class ColorPickerScreen extends Screen {
         context.fill(hueBarX - 2, selectorY - 1, hueBarX + HUE_BAR_WIDTH + 2, selectorY + 2, 0xFFFFFFFF);
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            // Check sat/bright picker
-            if (mouseX >= pickerX && mouseX <= pickerX + PICKER_SIZE &&
-                mouseY >= pickerY && mouseY <= pickerY + PICKER_SIZE) {
-                this.draggingSatBright = true;
-                this.updateSatBright(mouseX, mouseY);
-                return true;
-            }
-            
-            // Check hue bar
-            if (mouseX >= hueBarX && mouseX <= hueBarX + HUE_BAR_WIDTH &&
-                mouseY >= pickerY && mouseY <= pickerY + PICKER_SIZE) {
-                this.draggingHue = true;
-                this.updateHue(mouseY);
-                return true;
-            }
-        }
-        
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.draggingSatBright) {
-            this.updateSatBright(mouseX, mouseY);
-            return true;
-        }
-        
-        if (this.draggingHue) {
-            this.updateHue(mouseY);
-            return true;
-        }
-        
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        this.draggingSatBright = false;
-        this.draggingHue = false;
-        return super.mouseReleased(mouseX, mouseY, button);
-    }
     
     private void updateSatBright(double mouseX, double mouseY) {
         this.saturation = MathHelper.clamp((float) (mouseX - pickerX) / PICKER_SIZE, 0f, 1f);
@@ -271,6 +251,13 @@ public class ColorPickerScreen extends Screen {
         this.brightness = hsb[2];
     }
     
+    private static void drawBorder(DrawContext context, int x, int y, int width, int height, int color) {
+        context.drawHorizontalLine(x, x + width - 1, y, color);
+        context.drawHorizontalLine(x, x + width - 1, y + height - 1, color);
+        context.drawVerticalLine(x, y, y + height - 1, color);
+        context.drawVerticalLine(x + width - 1, y, y + height - 1, color);
+    }
+
     private static float[] rgbToHsb(int r, int g, int b) {
         float[] hsb = new float[3];
         int max = Math.max(r, Math.max(g, b));

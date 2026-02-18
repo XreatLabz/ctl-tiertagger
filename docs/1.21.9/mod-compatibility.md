@@ -1,28 +1,41 @@
 # Minecraft 1.21.9 Mod Compatibility Notes
 
-Source: DeepWiki summaries for FabricMC/fabric-loader, FabricMC/fabric, FabricMC/fabric-loom.
-Scope: Version Detection + Abstraction Layer strategy for this mod on Minecraft 1.21.9.
+Scope: validated compatibility behavior for CTL TierTagger on Minecraft 1.21.9.
 
-## 1) Runtime version detection
-- Use Fabric Loader's runtime game version (`FabricLoader.getInstance().getModContainer("minecraft")`) as the authoritative detected version.
-- Keep `fabric.mod.json` constraints explicit so Loader can block unsupported ranges before runtime.
-- Treat patch updates as compatible by default, but gate any fragile code paths behind detected-version checks.
+## 1) Declared support boundary
+- Project support range is `>=1.21.0 <=1.21.11`.
+- Runtime gate is enforced by `VersionSupport.requireSupportedOrThrow()`.
+- Metadata gate is enforced by `fabric.mod.json`.
 
-## 2) Abstraction layer pattern (recommended)
-- Keep version-specific logic behind a small adapter interface (example: `VersionBridge`).
-- Route all NMS/mixin-sensitive calls through adapters instead of direct scattered version checks.
-- Prefer Fabric API module abstractions/events over direct internals wherever possible.
-- If a patch changes mappings/signatures, update only adapter + mixin targets, keep feature code unchanged.
+## 2) Upstream changes relevant at 1.21.9
 
-## 3) Regression checklist after upgrading to this version
-- Client boot test (no crashes, mixins apply cleanly).
-- Dedicated server boot test (entrypoints + networking still initialize).
-- UI/render smoke test for TierTagger overlays/widgets.
-- Data/network test (packet handling, serialization/deserialization).
-- Third-party mod coexistence smoke test (common Fabric stack).
-- Log scan for mixin target misses, mapping warnings, classloading errors.
+### Mapping rename: `Entity#getWorld` → `Entity#getEntityWorld`
+- Status in this mod: **not directly used** in current code paths.
+- Action: no patch needed unless future code introduces direct calls.
 
-## 4) Patch-specific note for 1.21.9
-- DeepWiki does not expose unique architecture changes per 1.21.x patch in one place.
-- Apply the same Loader detection + adapter abstraction, then validate with the checklist above.
-- If a failure appears, isolate it in the version adapter/mixin layer only.
+### Player label render signature churn
+- Status in this mod: **used** via `EntityRendererMixin` label injection.
+- Action: maintain compatibility at mixin seam for both legacy and render-state signatures.
+- Impacted path: `src/client/java/com/ctltierlist/tiertagger/client/mixin/EntityRendererMixin.java`.
+
+### Render API churn (world render events removed/redesigned)
+- Status in this mod: **not used**.
+- Action: none; mod uses nametag mixin path, not world render events.
+
+### Identifier usage rules
+- Status in this mod: uses `Identifier.of(...)` (already aligned).
+- Action: keep avoiding direct `new Identifier(...)`.
+
+## 3) Compatibility seam policy
+- Keep version-sensitive calls centralized in:
+  - `ClientCompatBridge`
+  - `ClientCompatBridge121`
+  - `CompatBridgeFactory`
+- Avoid scattering version checks in feature logic.
+
+## 4) 1.21.9 regression checklist
+- Client startup passes runtime version gate.
+- Keybind registration works (`G`/`Y`).
+- Nametag tier rendering works (mixin target resolves, no signature misses).
+- Search screen and skin widget path works.
+- Logs contain no mixin target or descriptor errors.

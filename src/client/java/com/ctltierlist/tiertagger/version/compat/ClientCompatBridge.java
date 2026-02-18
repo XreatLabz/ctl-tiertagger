@@ -16,4 +16,6 @@ public interface ClientCompatBridge {
                             VertexConsumerProvider vertexConsumers, int backgroundColor, int light);
 
     KeyBinding createKeyBinding(String translationKey, int keyCode, String category);
+
+    String resolvePlayerName(Object renderLabelContext);
 }

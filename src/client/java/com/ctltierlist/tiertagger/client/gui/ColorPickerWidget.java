@@ -31,10 +31,9 @@ public class ColorPickerWidget extends ClickableWidget {
         
         // Draw border
         int borderColor = this.isHovered() ? 0xFFFFFFFF : 0xFF8B8B8B;
-        context.drawBorder(this.getX(), this.getY(), this.width, this.height, borderColor);
+        drawBorder(context, this.getX(), this.getY(), this.width, this.height, borderColor);
     }
 
-    @Override
     public void onClick(double mouseX, double mouseY) {
         this.expanded = !this.expanded;
         if (this.expanded && MinecraftClient.getInstance().currentScreen != null) {
@@ -61,6 +60,13 @@ public class ColorPickerWidget extends ClickableWidget {
         this.hue = (int) (hsb[0] * 360);
         this.saturation = (int) (hsb[1] * 100);
         this.brightness = (int) (hsb[2] * 100);
+    }
+
+    private static void drawBorder(DrawContext context, int x, int y, int width, int height, int color) {
+        context.drawHorizontalLine(x, x + width - 1, y, color);
+        context.drawHorizontalLine(x, x + width - 1, y + height - 1, color);
+        context.drawVerticalLine(x, y, y + height - 1, color);
+        context.drawVerticalLine(x + width - 1, y, y + height - 1, color);
     }
 
     private static float[] rgbToHsb(int r, int g, int b) {

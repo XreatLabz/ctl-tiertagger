@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "client-ctl-tiertagger-refmap.json",
   "client": [
-    "PlayerNametagMixin"
+    "PlayerNametagMixin",
+    "EntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
