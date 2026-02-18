@@ -1,4 +1,4 @@
-# GUI Docs (1.21.0)
+# GUI Docs (1.21)
 
 ## Main config screen
 - Entry UI class: `ConfigScreen`.
@@ -32,6 +32,6 @@
 - `shouldPause()` returns false for non-pausing overlay behavior.
 - `resize(...)` preserves text input when window size changes.
 
-## Multi-version notes (1.21.0)
+## Multi-version notes (1.21)
 - Keep screen feature logic version-agnostic and isolate API signature changes in small wrappers.
 - Re-test widget constructors and draw calls after each patch bump in 1.21.x.

@@ -2,8 +2,8 @@
 
 ## Supported Minecraft Versions
 
-The mod currently supports **Minecraft 1.21.0 through 1.21.11** (inclusive):
-- ✅ Minecraft 1.21.0
+The mod currently supports **Minecraft 1.21 through 1.21.11** (inclusive):
+- ✅ Minecraft 1.21
 - ✅ Minecraft 1.21.1
 - ✅ Minecraft 1.21.2
 - ✅ Minecraft 1.21.3
@@ -20,7 +20,7 @@ The mod currently supports **Minecraft 1.21.0 through 1.21.11** (inclusive):
 
 Support boundaries are intentionally aligned across all compatibility gates:
 - Runtime gate: `VersionSupport.MIN_SUPPORTED` / `VersionSupport.MAX_SUPPORTED`
-- Metadata gate: `fabric.mod.json` → `"minecraft": ">=1.21.0 <=1.21.11"`
+- Metadata gate: `fabric.mod.json` → `"minecraft": ">=1.21 <=1.21.11"`
 - Documentation: this file and versioned docs
 
 If you change support bounds, update all three together.
@@ -60,7 +60,7 @@ Feature logic should keep calling the seam; avoid scattered version checks.
 ## Build Baseline and Intent
 
 - Build baseline remains 1.21.1 Yarn/Fabric coordinates in `gradle.properties`
-- Runtime support range is still explicitly bounded to 1.21.0–1.21.11
+- Runtime support range is still explicitly bounded to 1.21–1.21.11
 - Patch support is validated through bridge/mixin seams plus smoke tests
 
 ## Verification Checklist
@@ -74,7 +74,7 @@ Minimum verification for compatibility updates:
    - LSP/project diagnostics
    - `./gradlew clean build`
 3. Runtime smoke versions:
-   - 1.21.0 (lower bound)
+   - 1.21 (lower bound)
    - 1.21.1 (baseline)
    - 1.21.9 or 1.21.10 (API churn boundary)
    - 1.21.11 (upper bound)

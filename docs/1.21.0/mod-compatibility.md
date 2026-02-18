@@ -1,7 +1,7 @@
-# Minecraft 1.21.0 Mod Compatibility Notes
+# Minecraft 1.21 Mod Compatibility Notes
 
 Source: DeepWiki summaries for FabricMC/fabric-loader, FabricMC/fabric, FabricMC/fabric-loom.
-Scope: Version Detection + Abstraction Layer strategy for this mod on Minecraft 1.21.0.
+Scope: Version Detection + Abstraction Layer strategy for this mod on Minecraft 1.21.
 
 ## 1) Runtime version detection
 - Use Fabric Loader's runtime game version (`FabricLoader.getInstance().getModContainer("minecraft")`) as the authoritative detected version.
@@ -22,7 +22,7 @@ Scope: Version Detection + Abstraction Layer strategy for this mod on Minecraft 
 - Third-party mod coexistence smoke test (common Fabric stack).
 - Log scan for mixin target misses, mapping warnings, classloading errors.
 
-## 4) Patch-specific note for 1.21.0
+## 4) Patch-specific note for 1.21
 - DeepWiki does not expose unique architecture changes per 1.21.x patch in one place.
 - Apply the same Loader detection + adapter abstraction, then validate with the checklist above.
 - If a failure appears, isolate it in the version adapter/mixin layer only.

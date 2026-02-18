@@ -3,7 +3,7 @@
 Scope: validated compatibility behavior for CTL TierTagger on Minecraft 1.21.11.
 
 ## 1) Declared support boundary
-- Project support range is `>=1.21.0 <=1.21.11`.
+- Project support range is `>=1.21 <=1.21.11`.
 - Runtime gate is enforced by `VersionSupport.requireSupportedOrThrow()`.
 - Metadata gate is enforced by `fabric.mod.json`.
 

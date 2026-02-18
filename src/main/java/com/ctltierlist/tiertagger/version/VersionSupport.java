@@ -4,7 +4,7 @@ import com.ctltierlist.tiertagger.CTLTierTagger;
 import net.fabricmc.loader.api.FabricLoader;
 
 public final class VersionSupport {
-    public static final MinecraftVersion MIN_SUPPORTED = MinecraftVersion.parse("1.21.0");
+    public static final MinecraftVersion MIN_SUPPORTED = MinecraftVersion.parse("1.21");
     public static final MinecraftVersion MAX_SUPPORTED = MinecraftVersion.parse("1.21.11");
 
     private VersionSupport() {}

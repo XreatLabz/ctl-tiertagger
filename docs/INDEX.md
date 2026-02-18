@@ -8,11 +8,11 @@ Generated from project implementation and DeepWiki-guided Fabric strategy notes.
 - [GUI](./1.21.x/gui.md)
 - [Mod Menu Multi-Version](./1.21.x/modmenu-multiversion.md)
 
-## 1.21.0
-- [Compatibility](./1.21.0/mod-compatibility.md)
-- [Nametag Display](./1.21.0/nametag-display.md)
-- [GUI](./1.21.0/gui.md)
-- [Mod Menu Multi-Version](./1.21.0/modmenu-multiversion.md)
+## 1.21
+- [Compatibility](./1.21/mod-compatibility.md)
+- [Nametag Display](./1.21/nametag-display.md)
+- [GUI](./1.21/gui.md)
+- [Mod Menu Multi-Version](./1.21/modmenu-multiversion.md)
 
 ## 1.21.1
 - [Compatibility](./1.21.1/mod-compatibility.md)

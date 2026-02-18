@@ -1,4 +1,4 @@
-# Nametag Display Docs (1.21.0)
+# Nametag Display Docs (1.21)
 
 ## Rendering flow
 - `PlayerNametagMixin` modifies `PlayerEntity#getDisplayName()` to format: `[ICON] TIER | PlayerName`.
@@ -22,6 +22,6 @@
 - Gradient path in nametag text uses `createGradientText(...)` in `PlayerNametagMixin`.
 - Extra above-nametag rendering uses `TextRenderer.draw(..., TextLayerType.SEE_THROUGH, ...)`.
 
-## Multi-version notes (1.21.0)
+## Multi-version notes (1.21)
 - Keep all version-sensitive rendering changes behind mixin targets and helper methods.
 - If mappings/signatures drift in 1.21 patches, update only mixin signatures + adapter paths.
