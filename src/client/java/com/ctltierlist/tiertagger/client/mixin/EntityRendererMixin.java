@@ -10,6 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -21,7 +22,7 @@ public abstract class EntityRendererMixin {
         at = @At("TAIL"),
         require = 0
     )
-    private void onRenderLabel(Object renderLabelContext, Text text, MatrixStack matrices,
+    private void onRenderLabel(@Coerce Object renderLabelContext, Text text, MatrixStack matrices,
                                VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         try {
             if (renderLabelContext instanceof AbstractClientPlayerEntity player) {
