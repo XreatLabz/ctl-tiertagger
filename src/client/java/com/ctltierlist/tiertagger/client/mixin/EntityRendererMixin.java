@@ -17,6 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntityRenderer.class)
 public abstract class EntityRendererMixin {
 
+    private static boolean renderErrorLogged = false;
+    private static boolean disableTierRender = false;
+
     @Inject(
         method = "renderLabelIfPresent",
         at = @At("TAIL"),
@@ -24,6 +27,14 @@ public abstract class EntityRendererMixin {
     )
     private void onRenderLabel(@Coerce Object renderLabelContext, Text text, MatrixStack matrices,
                                VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        if (disableTierRender) {
+            return;
+        }
+
+        if (renderLabelContext == null) {
+            return;
+        }
+
         try {
             if (renderLabelContext instanceof AbstractClientPlayerEntity player) {
                 TierHudRenderer.renderTierAboveNametag(player, matrices, vertexConsumers, light);
@@ -34,8 +45,12 @@ public abstract class EntityRendererMixin {
             if (playerName != null) {
                 TierHudRenderer.renderTierAboveNametag(playerName, matrices, vertexConsumers, light);
             }
-        } catch (Exception e) {
-            CTLTierTagger.LOGGER.error("Error rendering tier label: {}", e.getMessage(), e);
+        } catch (Exception | LinkageError e) {
+            disableTierRender = true;
+            if (!renderErrorLogged) {
+                renderErrorLogged = true;
+                CTLTierTagger.LOGGER.error("Error rendering tier label (tier rendering disabled, further errors suppressed): {}", e.getMessage(), e);
+            }
         }
     }
 }
